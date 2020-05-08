@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-cn" ng-app="actionApp">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>实战</title>
+ 
+<!-- Bootstrap的CSS -->
+<link href="css/bootstrap/bootstrap.min.css" rel="stylesheet">
+<style type="text/css">
+.content {
+  padding: 100px 15px;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+    <!--使用Bootstrp定义的导航，并配合AngularJS的路由，通过路由名称#/oper和#/directive切换视图-->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="#/oper">后台交互</a></li>
+            <li><a href="#/directive">自定义指令</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+    
+    
+     <div class="content">
+        <!--页面载入地方-->
+        <ng-view></ng-view>
+    </div>
+    <script src="script/jquery-3.5.1.min.js"></script>
+    <script src="script/bootstrap/bootstrap.min.js"></script>
+    <script src="script/angular.min.js"></script>
+    <script src="script/angular-route.min.js"></script>
+    <script src="script/app.js"></script><!--为我们定义了模块和路由-->
+    <script src="script/controllers.js"></script><!--控制器定义-->
+</body>
+</html>
