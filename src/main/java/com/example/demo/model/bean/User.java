@@ -6,8 +6,12 @@ public class User implements Serializable {
 	private static final long serialVersionUID = -5611386225028407298L;
 	
 	private Integer id;
+	private String account;
 	private String name;
 	private String password;
+	private Integer agent;
+	private String image;
+	private String phone;
 	private String address;
 
     // 省略get和set方法，大家自己设置即可
@@ -16,6 +20,12 @@ public class User implements Serializable {
 	}
 	public void setId(Integer id) {
 		this.id = id;
+	}
+	public String getAccount() {
+		return account;
+	}
+	public void setAccount(String account) {
+		this.account = account;
 	}
 	public String getName() {
 		return name;
@@ -28,6 +38,24 @@ public class User implements Serializable {
 	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	public Integer getAgent() {
+		return agent;
+	}
+	public void setAgent(Integer agent) {
+		this.agent = agent;
+	}
+	public String getImage() {
+		return image;
+	}
+	public void setImage(String image) {
+		this.image = image;
+	}
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 	public String getAddress() {
 		return address;
