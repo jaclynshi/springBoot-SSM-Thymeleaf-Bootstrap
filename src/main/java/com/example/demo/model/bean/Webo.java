@@ -6,29 +6,36 @@ public class Webo implements Serializable {
 	private static final long serialVersionUID = -5611386225028407298L;
 	
 	private Integer id;
-	private Integer userID;
+	private String userID;
 	private String content;
 	private String image;
 	private Integer commentCount;
 	private String publishTime;
+	private User user;
 
     // 省略get和set方法，大家自己设置即可
+	public User getUser() {
+		return user;
+	}
+	public void setUser(User user) {
+		this.user = user;
+	}
 	public Integer getId() {
 		return id;
 	}
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public Integer getUserID() {
+	public String getUserID() {
 		return userID;
 	}
-	public void setUserID(Integer userID) {
+	public void setUserID(String userID) {
 		this.userID = userID;
 	}
 	public String getContent() {
 		return content;
 	}
-	public void setUserID(String content) {
+	public void setContent(String content) {
 		this.content = content;
 	}
 	public String getImage() {

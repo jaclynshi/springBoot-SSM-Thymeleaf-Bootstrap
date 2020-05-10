@@ -28,7 +28,7 @@
     <div class="row flex-nowrap justify-content-between align-items-center">
       <div class="col-8 pt-1">
         <i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted active" href="/">主页</a>
-        <span th:if="${userInfo!=null}">
+        <span th:if="${userID!=null}">
         	<i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted" href="/weboCenter">微博心情大厅</a>
 	        <i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted" href="/myWebo">我的心情微博</a>
 	        <i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted" href="/friendWebo">好友心情微博</a>
@@ -41,13 +41,13 @@
         <!--<a class="text-muted" href="#" aria-label="Search">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="mx-3" role="img" viewBox="0 0 24 24" focusable="false"><title>Search</title><circle cx="10.5" cy="10.5" r="7.5"/><path d="M21 21l-5.2-5.2"/></svg>
         </a>-->
-        <div th:if="${userInfo==null}">
+        <div th:if="${userID==null}">
             <button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#login">登录</button>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#signup">注册</button>
         </div>
         
-		<div class="dropdown" th:if="${userInfo!=null}">
-		  <button th:text="${userInfo.name}" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+		<div class="dropdown" th:if="${userID!=null}">
+		  <button th:text="${username}" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
 		  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 		    <a class="dropdown-item" href="logout">退出</a>
 		  </div>
