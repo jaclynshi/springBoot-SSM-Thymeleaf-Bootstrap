@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,8 @@ import com.example.demo.model.bean.Webo;
 import com.example.demo.model.dao.WeboDAO;
 import com.example.demo.model.bean.Comment;
 import com.example.demo.model.dao.CommentDAO;
+import com.example.demo.model.bean.Followuser;
+import com.example.demo.model.dao.FollowuserDAO;
 import com.example.demo.fileupload.demo.util.FileUtils;
 import java.util.Map;
 
@@ -40,6 +43,9 @@ public class BasicController {
 	
 	@Autowired
 	private CommentDAO commentDAO;
+	
+	@Autowired
+	private FollowuserDAO followuserDAO;
 	
 	@GetMapping(value = "")
 	public Object index(Map<String, Object> map, HttpSession session) {
@@ -201,6 +207,13 @@ public class BasicController {
 			if(weboID > 0) {
 				Webo webo = weboDAO.findByID(weboID);
 				List<Comment> comment = commentDAO.viewByID(weboID);
+				Followuser follow = followuserDAO.find(weboID, session.getAttribute("userID").toString());
+				if(follow != null) {
+					map.put("follow", 1);
+				}else {
+					map.put("follow", 0);
+				}
+	
 //				return comment;
 				map.put("comments", comment);
 				map.put("webo", webo);
@@ -225,11 +238,36 @@ public class BasicController {
 			    sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
 			    
 				commentDAO.create(weboID, session.getAttribute("userID").toString(), comment, sdf.format(d));
+				weboDAO.updateCommentCount(weboID);
 			}
 		}else {
 			return new ModelAndView("redirect:/");
 		}
 						
-		return new ModelAndView("pages/viewWebo");
+		return new ModelAndView("redirect:/viewWebo?weboID="+weboID);
+	}
+	
+	@GetMapping(value = "followuser")
+	public Object followuser(String followFrom, String followTo,String weboID, Map<String, Object> map, HttpSession session) {
+		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
+			map.put("userID", session.getAttribute("userID"));
+			map.put("username", session.getAttribute("username"));
+			followuserDAO.create(followFrom, followTo);
+		}else{
+			return new ModelAndView("redirect:/");
+		}
+		return new ModelAndView("redirect:/viewWebo?weboID="+weboID);
+	}
+	
+	@GetMapping(value = "unfollowuser")
+	public Object unfollowuser(String followFrom, String followTo,String weboID, Map<String, Object> map, HttpSession session) {
+		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
+			map.put("userID", session.getAttribute("userID"));
+			map.put("username", session.getAttribute("username"));
+			followuserDAO.delete(followFrom, followTo);
+		}else{
+			return new ModelAndView("redirect:/");
+		}
+		return new ModelAndView("redirect:/viewWebo?weboID="+weboID);
 	}
 }

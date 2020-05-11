@@ -6,7 +6,7 @@
   </select>-->
   
   <select id="findByID" resultMap="userWeboMap">
-    SELECT w.id, w.userID, w.content, w.image, w.publishTime, w.commentCount, u.name from webo w left join user u on w.userID = u.id where w.id = #{weboID}
+    SELECT w.id, w.userID, w.content, w.image, w.publishTime, w.commentCount, u.name, u.id as userID from webo w left join user u on w.userID = u.id where w.id = #{weboID}
   </select>
 	
   <select id="findByUserID" resultMap="userWeboMap">
@@ -43,4 +43,8 @@
   <delete id="deleteByID" parameterType="com.example.demo.model.bean.Webo">
     delete from webo where id = #{myWeboID}
   </delete>
+  
+  <update id="updateCommentCount" parameterType="com.example.demo.model.bean.Webo">
+  	update webo set commentCount = commentCount + 1 where id = #{weboID}
+  </update>
 </mapper>

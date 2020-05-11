@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.model.dao.FollowuserDAO">
+  <select id="find" resultType="com.example.demo.model.bean.Followuser">
+    SELECT id from followuser where followFrom = #{userID} and followTo = (SELECT userID from webo where id = #{weboID})
+  </select>
+  
+  <insert id="create" parameterType="com.example.demo.model.bean.Followuser">
+    INSERT into followuser(followFrom, followTo) VALUES(#{followFrom}, #{followTo})
+  </insert>
+  
+  <insert id="delete" parameterType="com.example.demo.model.bean.Followuser">
+    DELETE FROM followuser where followFrom = #{followFrom} and followTo = #{followTo}
+  </insert>
+</mapper>

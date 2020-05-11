@@ -20,6 +20,8 @@ public interface WeboDAO {
 	public Integer create(@Param("userID")String userID, @Param("content")String content, @Param("image")String image, @Param("publishTime")String publishTime);
 	
 	public Integer deleteByID(@Param("myWeboID")Integer myWeboID);
+	
+	public Integer updateCommentCount(@Param("weboID")Integer weboID);
 
 	// 注： CRTL+Shift+O，快捷导入所有import
 }
