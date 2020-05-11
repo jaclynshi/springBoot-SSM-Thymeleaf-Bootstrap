@@ -12,13 +12,49 @@
 	<link rel="stylesheet" href="css/all.min.css">
 	<meta name="msapplication-config" content="/docs/4.4/assets/img/favicons/browserconfig.xml">
 	<meta name="theme-color" content="#563d7c">
-	<meta http-equiv="Content-Type" content="multipart/form-data; charset=utf-8" />
+	
 	<style>
 		header{
 		    border-bottom: 1px solid lightgray;
 		}
 		header a.text-muted.active{
 			color: #007bff!important;
+		}
+		.myWeboList li{
+			list-style:none;
+			box-shadow: 2px 2px 5px #ddd;
+    		padding: 15px;
+		}
+		.myWeboList .username,
+		.viewWebo .comment_username{
+			height: 36px;
+		    display: inline-block;
+		    padding: 5px 10px;
+		    background: aliceblue;
+		    border-radius: 5px;
+		    color: blue;
+		}
+		.myWeboList img{
+			max-width: 300px;
+			width: 100%;
+		}
+		.myWeboList a.remove,
+		.myWeboList a.back,
+		.myWeboList span.commentCount{
+			float: right;
+		}
+		
+		.myWeboList a.back{
+			color: #fff;
+		}
+		
+		.viewWebo p.publishTime{
+		    border-bottom: 1px solid lightgray;
+		}
+		
+		.viewWebo .comment_username{
+			background: bisque;
+    		color: blueviolet;
 		}
 	</style>
 </head>
@@ -32,7 +68,7 @@
         	<i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted" href="/weboCenter">微博心情大厅</a>
 	        <i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted" href="/myWebo">我的心情微博</a>
 	        <i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted" href="/friendWebo">好友心情微博</a>
-	        <i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted active" href="/publishWebo">发布心情微博</a>
+	        <i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted" href="/publishWebo">发布心情微博</a>
 	        <i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted" href="/friendList">关注好友列表</a>
         </span>
       </div>
@@ -57,29 +93,44 @@
     </div>
   </header>
   
+  
   <div class="container">
-	  <div class="row">
-		  	<div class="col-md-8">
-			  <form action="publishWebo" method="post" enctype="multipart/form-data">
-		  		<p class="upload__msg text-primary" th:text="${msg}"></p>
-		  		<p class="upload__msg text-danger" th:text="${uploadErrors}"></p>
-		  		<div class="input-group mb-3">
-		  			心情内容：<textarea name="weboContent" class="form-control"></textarea>
-		  		</div>
-		  		<div class="input-group mb-3">
-		  			心情配图：<input type="file" name="weboImg"/>
-		  		</div>
-		  		<input class="btn btn-primary" type="submit" value="发布">
-		  	  </form>
-			 </div>
-			 <div class="col-md-4">
-			 	<div class="right_box mt-3">
-			 		<div class="profile_box">
-			 			<p th:text="${username} + '的主页'"></p>
-			 		</div>
-			 	</div>
-			 </div>
-		</div>
+  	<div class="row">
+	  	<div class="col-md-8">
+		  <ul class="myWeboList pl-0 viewWebo">
+		  	<li class="mb-3 mt-3">
+	          	<p>
+	          		<span class="username mr-3" th:text="${webo.user.name}"></span><span class="content" th:text="${webo.content}"></span>
+	          		<a class="btn btn-primary back" href="javascript:history.back(-1)">返回</a>
+	          	</p>
+	          	<img th:src="${webo.image != ''}?'upload/' + ${webo.image}:''" th:style="${webo.image == ''}?'display:none':''"/>
+	          	<p class="publishTime mb-0 mt-2 pb-3"><span th:text="${webo.publishTime}"></span><span class="commentCount" th:text="'评论：' + ${webo.commentCount} + '条'"></span></p> 
+	          	<p class="mt-3" th:if="${#lists.isEmpty(comments)}">没有任何评论哦！</p>
+				<div th:each="item,stat:${comments}" class="mb-3 mt-3">
+					<p>
+		          		<span class="comment_username mr-3" th:text="${item.webo.user.name}"></span>
+		          		<span class="content" th:text="${item.commentTime}"></span>		       
+		          	</p>
+		          	<p th:text="${item.content}"></p>
+				</div>
+	      	</li>
+		  </ul>
+		  <form method="post">
+		  	<p class="error_msg text-danger" th:text="${commentErrors}"></p>
+		      	<div class="input-group mb-3">
+		        	<input type="text" name="comment" class="form-control" placeholder="快给此心情微博评论吧！">
+		        </div>		        		   
+		        <input class="btn btn-primary" type="submit" value="发送">
+		  </form>
+		 </div>
+		 <div class="col-md-4">
+		 	<div class="right_box mt-3">
+		 		<div class="profile_box">
+		 			<p th:text="${username} + '的主页'"></p>
+		 		</div>
+		 	</div>
+		 </div>
+	</div>
   </div>
   
   <!-- Modal -->

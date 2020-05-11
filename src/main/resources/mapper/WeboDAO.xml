@@ -4,9 +4,17 @@
   <!--<select id="findByUserID" resultType="com.example.demo.model.bean.Webo">
     SELECT userID, content, image, publishTime from webo where userID = #{userID}
   </select>-->
+  
+  <select id="findByID" resultMap="userWeboMap">
+    SELECT w.id, w.userID, w.content, w.image, w.publishTime, w.commentCount, u.name from webo w left join user u on w.userID = u.id where w.id = #{weboID}
+  </select>
 	
   <select id="findByUserID" resultMap="userWeboMap">
-    SELECT w.userID, w.content, w.image, w.publishTime, w.commentCount, u.name from webo w left join user u on w.userID = u.id where w.userID = #{userID}
+    SELECT w.id, w.userID, w.content, w.image, w.publishTime, w.commentCount, u.name from webo w left join user u on w.userID = u.id where w.userID = #{userID} order by w.publishTime desc
+  </select>
+  
+  <select id="find" resultMap="userWeboMap">
+    SELECT w.id, w.userID, w.content, w.image, w.publishTime, w.commentCount, u.name from webo w left join user u on w.userID = u.id order by w.publishTime desc
   </select>
   
   <resultMap id="userWeboMap" type="com.example.demo.model.bean.Webo">
@@ -31,4 +39,8 @@
   <insert id="create" parameterType="com.example.demo.model.bean.Webo">
     INSERT into webo(userID, content, image, publishTime) VALUES(#{userID}, #{content}, #{image}, #{publishTime})
   </insert>
+  
+  <delete id="deleteByID" parameterType="com.example.demo.model.bean.Webo">
+    delete from webo where id = #{myWeboID}
+  </delete>
 </mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.model.dao.CommentDAO">
+  <select id="viewByID" resultMap="commentWeboMap">
+    SELECT c.id, c.weboID, c.commentFrom, c.content, c.commentTime, u.name from Comment c right join webo w on c.weboID = w.id left join user u on w.userID = u.id where c.weboID = #{weboID} order by c.commentTime desc
+  </select>
+  
+  <resultMap id="commentWeboMap" type="com.example.demo.model.bean.Comment">
+		<id property="id" column="id"></id>
+		<result property="weboID" column="weboID"></result>
+		<result property="commentFrom" column="commentFrom"></result>
+		<result property="content" column="content"></result>
+		<result property="commentTime" column="commentTime"></result>
+		<association property="webo" column="weboID" javaType="com.example.demo.model.bean.Webo">
+			<id property="id" column="id"></id>
+			<result property="userID" column="userID"></result>
+			<result property="content" column="content"></result>
+			<result property="image" column="image"></result>
+			<result property="commentCount" column="commentCount"></result>
+			<result property="publishTime" column="publishTime"></result>
+			<association property="user" column="userID" javaType="com.example.demo.model.bean.User">
+				<id property="id" column="id"></id>
+				<result property="account" column="account"></result>
+				<result property="name" column="name"></result>
+				<result property="password" column="password"></result>
+				<result property="image" column="image"></result>
+				<result property="agent" column="agent"></result>
+				<result property="phone" column="phone"></result>
+				<result property="address" column="address"></result>
+		</association>
+		</association>
+	</resultMap>
+  
+  <insert id="create" parameterType="com.example.demo.model.bean.Comment">
+    INSERT into comment(weboID, commentFrom, content, commentTime) VALUES(#{weboID}, #{commentFrom}, #{content}, #{commentTime})
+  </insert>
+</mapper>

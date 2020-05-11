@@ -11,6 +11,8 @@ import com.example.demo.model.bean.User;
 import com.example.demo.model.dao.UserDAO;
 import com.example.demo.model.bean.Webo;
 import com.example.demo.model.dao.WeboDAO;
+import com.example.demo.model.bean.Comment;
+import com.example.demo.model.dao.CommentDAO;
 import com.example.demo.fileupload.demo.util.FileUtils;
 import java.util.Map;
 
@@ -35,6 +37,9 @@ public class BasicController {
 	
 	@Autowired
 	private WeboDAO weboDAO;
+	
+	@Autowired
+	private CommentDAO commentDAO;
 	
 	@GetMapping(value = "")
 	public Object index(Map<String, Object> map, HttpSession session) {
@@ -119,7 +124,7 @@ public class BasicController {
 			map.put("uploadErrors", "心情内容不能为空！");
 		}else if(!StringUtils.isEmpty(weboImg.getOriginalFilename())) {
 			// 要上传的目标文件存放路径
-	        String localPath = "C:\\springBoot+SSM+thymeleaf\\springBoot-SSM-Thymeleaf-Bootstrap\\src\\main\\resources\\static\\upload";
+	        String localPath = "E:\\demo\\src\\main\\resources\\static\\upload";
 	        // 上传成功或者失败的提示
 	        String msg = "";
 
@@ -141,7 +146,7 @@ public class BasicController {
 	    
 		weboDAO.create(session.getAttribute("userID").toString(), weboContent, weboImg.getOriginalFilename(), sdf.format(d));
         
-        return new ModelAndView("pages/publishWebo");
+        return new ModelAndView("redirect:/myWebo");
 	}
 	
 	
@@ -160,5 +165,71 @@ public class BasicController {
 			return new ModelAndView("redirect:/");
 		}
 		return new ModelAndView("pages/myWebo");
+	}
+	
+	@GetMapping(value = "removeMyWebo")
+	public Object removeMyWebo(Integer myWeboID) {
+		if(myWeboID > 0) {
+			weboDAO.deleteByID(myWeboID);
+		}
+		return new ModelAndView("redirect:/myWebo");
+	}
+	
+	@GetMapping(value = "weboCenter")
+	public Object weboCenter(Map<String, Object> map, HttpSession session) {
+		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
+			map.put("userID", session.getAttribute("userID"));
+			map.put("username", session.getAttribute("username"));
+			
+			List<Webo> webo = weboDAO.find();
+			
+			if(webo != null) {
+//				return webo;
+				map.put("Webos", webo);
+			}
+		}else {
+			return new ModelAndView("redirect:/");
+		}
+		return new ModelAndView("pages/weboCenter");
+	}
+	
+	@GetMapping(value = "viewWebo")
+	public Object viewWebo(Integer weboID, Map<String, Object> map, HttpSession session) {
+		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
+			map.put("userID", session.getAttribute("userID"));
+			map.put("username", session.getAttribute("username"));
+			if(weboID > 0) {
+				Webo webo = weboDAO.findByID(weboID);
+				List<Comment> comment = commentDAO.viewByID(weboID);
+//				return comment;
+				map.put("comments", comment);
+				map.put("webo", webo);
+			}
+		}else{
+			return new ModelAndView("redirect:/");
+		}
+		return new ModelAndView("pages/viewWebo");
+	}
+	
+	
+	@RequestMapping(value = "viewWebo", method = RequestMethod.POST)
+	public Object sendComment(Integer weboID, Map<String, Object> map,@RequestParam(value = "comment", required = false) String comment, HttpSession session) {	
+		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
+			map.put("userID", session.getAttribute("userID"));
+			map.put("username", session.getAttribute("username"));
+			if(StringUtils.isEmpty(comment)) {
+				map.put("commentErrors", "评论不能为空！");
+			}else {	
+				Date d = new Date();
+			    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss ");
+			    sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+			    
+				commentDAO.create(weboID, session.getAttribute("userID").toString(), comment, sdf.format(d));
+			}
+		}else {
+			return new ModelAndView("redirect:/");
+		}
+						
+		return new ModelAndView("pages/viewWebo");
 	}
 }

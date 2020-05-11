@@ -14,7 +14,7 @@ CREATE TABLE `user` (
   `phone` varchar(255) NULL,
   `address` varchar(255) NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		
 -- ----------------------------
 -- Table structure for webo
@@ -28,4 +28,28 @@ CREATE TABLE `webo` (
   `commentCount` int(11) NOT NULL DEFAULT 0,
   `publishTime` TIMESTAMP NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		
+-- ----------------------------
+-- Table structure for followUser
+-- ----------------------------
+DROP TABLE IF EXISTS `followUser`;
+CREATE TABLE `followUser` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `followFrom` int(11) NOT NULL,
+  `followTo` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		
+-- ----------------------------
+-- Table structure for comment
+-- ----------------------------
+DROP TABLE IF EXISTS `comment`;
+CREATE TABLE `comment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `weboID` int(11) NOT NULL,
+  `commentFrom` int(11) NOT NULL,
+  `content` varchar(255) NOT NULL,
+  `commentTime` TIMESTAMP NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -12,8 +12,14 @@ import java.util.List;
 public interface WeboDAO {
 	
 	public List<Webo> findByUserID(@Param("userID")String userID);
+	
+	public Webo findByID(@Param("weboID")Integer weboID);
+	
+	public List<Webo> find();
 
 	public Integer create(@Param("userID")String userID, @Param("content")String content, @Param("image")String image, @Param("publishTime")String publishTime);
+	
+	public Integer deleteByID(@Param("myWeboID")Integer myWeboID);
 
 	// 注： CRTL+Shift+O，快捷导入所有import
 }
