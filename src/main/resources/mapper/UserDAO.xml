@@ -9,6 +9,26 @@
     SELECT id, account, name, password, address, image, phone, agent from user where account = #{account}
   </select>
   
+  <select id="findMyFollow" resultMap="userFollowMap">
+    SELECT u.name, u.id from user u left join followuser fu on u.id = fu.followTo where fu.followFrom = #{userID}
+  </select>
+  
+  <resultMap id="userFollowMap" type="com.example.demo.model.bean.User">
+		<id property="id" column="id"></id>
+		<result property="account" column="account"></result>
+		<result property="name" column="name"></result>
+		<result property="password" column="password"></result>
+		<result property="image" column="image"></result>
+		<result property="agent" column="agent"></result>
+		<result property="phone" column="phone"></result>
+		<result property="address" column="address"></result>
+		<association property="followuser" column="id" javaType="com.example.demo.model.bean.Followuser">
+			<id property="id" column="id"></id>
+			<result property="followFrom" column="followFrom"></result>
+			<result property="followTo" column="followTo"></result>
+		</association>
+	</resultMap>
+  
   <insert id="create" parameterType="com.example.demo.model.bean.User">
     INSERT into user(account, password, name, agent, phone, address) VALUES(#{account}, #{password}, #{name}, #{agent}, #{phone}, #{address})
   </insert>

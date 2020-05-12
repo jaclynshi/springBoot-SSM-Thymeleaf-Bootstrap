@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.example.demo.model.dao.CommentDAO">
   <select id="viewByID" resultMap="commentWeboMap">
-    SELECT c.id, c.weboID, c.commentFrom, c.content, c.commentTime, u.name from Comment c right join webo w on c.weboID = w.id left join user u on w.userID = u.id where c.weboID = #{weboID} order by c.commentTime desc
+    SELECT c.id, c.weboID, c.commentFrom, c.content, c.commentTime, u.name from Comment c right join webo w on c.weboID = w.id left join user u on c.commentFrom = u.id where c.weboID = #{weboID} order by c.commentTime desc
   </select>
   
   <resultMap id="commentWeboMap" type="com.example.demo.model.bean.Comment">

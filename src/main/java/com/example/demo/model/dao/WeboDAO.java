@@ -22,6 +22,8 @@ public interface WeboDAO {
 	public Integer deleteByID(@Param("myWeboID")Integer myWeboID);
 	
 	public Integer updateCommentCount(@Param("weboID")Integer weboID);
+	
+	public List<Webo> findFriendWebo(@Param("userID")String userID);
 
 	// 注： CRTL+Shift+O，快捷导入所有import
 }

@@ -13,8 +13,15 @@ public class User implements Serializable {
 	private String image;
 	private String phone;
 	private String address;
+	private Followuser followuser;
 
     // 省略get和set方法，大家自己设置即可
+	public Followuser getFollowuser() {
+		return followuser;
+	}
+	public void setFollowuser(Followuser followuser) {
+		this.followuser = followuser;
+	}
 	public Integer getId() {
 		return id;
 	}

@@ -5,6 +5,14 @@
     SELECT id from followuser where followFrom = #{userID} and followTo = (SELECT userID from webo where id = #{weboID})
   </select>
   
+  <select id="findMyFollowCount" resultType="com.example.demo.model.bean.Followuser">
+    SELECT count(*) as myFollowCount from followuser where followFrom = #{userID}
+  </select>
+  
+  <select id="findFollowMeCount" resultType="com.example.demo.model.bean.Followuser">
+    SELECT count(*) as followMeCount from followuser where followTo = #{userID}
+  </select>
+  
   <insert id="create" parameterType="com.example.demo.model.bean.Followuser">
     INSERT into followuser(followFrom, followTo) VALUES(#{followFrom}, #{followTo})
   </insert>

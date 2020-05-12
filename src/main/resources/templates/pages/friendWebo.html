@@ -51,8 +51,8 @@
         <i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted" href="/">主页</a>
         <span th:if="${userID!=null}">
         	<i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted" href="/weboCenter">微博心情大厅</a>
-	        <i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted active" href="/myWebo">我的心情微博</a>
-	        <i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted" href="/friendWebo">好友心情微博</a>
+	        <i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted" href="/myWebo">我的心情微博</a>
+	        <i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted active" href="/friendWebo">好友心情微博</a>
 	        <i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted" href="/publishWebo">发布心情微博</a>
 	        <i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted" href="/friendList">关注好友列表</a>
         </span>
@@ -83,14 +83,17 @@
   	<div class="row">
 	  	<div class="col-md-8">
 		  <ul class="myWeboList pl-0">
-		 	<p class="mt-3" th:if="${#lists.isEmpty(myWebos)}">您没有发布任何微博哦！</p>
-		  	<li th:each="item,stat:${myWebos}" class="mb-3 mt-3">
-	          	<p>
-	          		<span class="username mr-3" th:text="${item.user.name}"></span><span class="content" th:text="${item.content}"></span>
-	          		<a th:href="@{'removeMyWebo?myWeboID=' + ${item.id}}" class="remove">删除</a>
-	          	</p>
-	          	<img th:src="${item.image != ''}?'upload/' + ${item.image}:''" th:style="${item.image == ''}?'display:none':''"/>
-	          	<p class="publishTime mb-0 mt-2"><span th:text="${item.publishTime}"></span><span class="commentCount" th:text="'评论：' + ${item.commentCount} + '条'"></span></p>
+		  	<p class="mt-3" th:if="${#lists.isEmpty(friendWebos)}">还没有何微博哦！</p>
+		  	<li th:each="item,stat:${friendWebos}" class="mb-3 mt-3">
+		  		<a th:href="@{'viewWebo?weboID=' + ${item.id}}" style="text-decoration: none;color: #000;">
+		          	<p>
+		          		<span class="username mr-3" th:text="${item.user.name}"></span><span class="content" th:text="${item.content}"></span>
+		          		<!-- <a th:href="@{'removeMyWebo?myWeboID=' + ${item.id}}" class="remove">删除</a> -->
+		          	
+		          	</p>
+		          	<img th:src="${item.image != ''}?'upload/' + ${item.image}:''" th:style="${item.image == ''}?'display:none':''"/>
+		          	<p class="publishTime mb-0 mt-2"><span th:text="${item.publishTime}"></span><span class="commentCount" th:text="'评论：' + ${item.commentCount} + '条'"></span></p>
+		          </a>
 	      	</li>
 		  </ul>
 		 </div>

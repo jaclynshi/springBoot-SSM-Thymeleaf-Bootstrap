@@ -12,8 +12,15 @@ public class Webo implements Serializable {
 	private Integer commentCount;
 	private String publishTime;
 	private User user;
+	private Followuser followuser;
 
     // 省略get和set方法，大家自己设置即可
+	public Followuser getFollowuser() {
+		return followuser;
+	}
+	public void setFollowuser(Followuser followuser) {
+		this.followuser = followuser;
+	}
 	public User getUser() {
 		return user;
 	}

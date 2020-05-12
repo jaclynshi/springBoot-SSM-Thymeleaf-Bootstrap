@@ -8,8 +8,22 @@ public class Followuser implements Serializable {
 	private Integer id;
 	private String followFrom;
 	private String followTo;
+	private Integer myFollowCount;
+	private Integer followMeCount;
 
     // 省略get和set方法，大家自己设置即可
+	public Integer getMyFollowCount() {
+		return myFollowCount;
+	}
+	public void setMyFollowCount(Integer myFollowCount) {
+		this.myFollowCount = myFollowCount;
+	}
+	public Integer getFollowMeCount() {
+		return followMeCount;
+	}
+	public void setFollowMeCount(Integer followMeCount) {
+		this.followMeCount = followMeCount;
+	}
 	public Integer getId() {
 		return id;
 	}

@@ -49,9 +49,22 @@ public class BasicController {
 	
 	@GetMapping(value = "")
 	public Object index(Map<String, Object> map, HttpSession session) {
-//		map.put("errors", "昂首千秋远,笑傲风间,堪寻敌手共论剑,高处不胜寒");
-		map.put("userID", session.getAttribute("userID"));
-		map.put("username", session.getAttribute("username"));
+		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
+			map.put("userID", session.getAttribute("userID"));
+			map.put("username", session.getAttribute("username"));
+			
+			Followuser myFollow = followuserDAO.findMyFollowCount(session.getAttribute("userID").toString());
+			Followuser followMe = followuserDAO.findFollowMeCount(session.getAttribute("userID").toString());
+
+			map.put("myFollow", myFollow);
+			map.put("followMe", followMe);
+		}
+		List<Webo> webo = weboDAO.find();
+		
+		if(webo != null) {
+//			return webo;
+			map.put("Webos", webo);
+		}
 		return new ModelAndView("pages/index"); // 姝ゅ鎸囧悜鐣岄潰
 	}
 	
@@ -74,6 +87,18 @@ public class BasicController {
 					session.setAttribute("username", user.getName());
 					map.put("username", session.getAttribute("username"));
 					map.put("userID", session.getAttribute("userID"));
+					List<Webo> webo = weboDAO.find();
+					
+					Followuser myFollow = followuserDAO.findMyFollowCount(session.getAttribute("userID").toString());
+					Followuser followMe = followuserDAO.findFollowMeCount(session.getAttribute("userID").toString());
+
+					map.put("myFollow", myFollow);
+					map.put("followMe", followMe);
+					
+					if(webo != null) {
+//						return webo;
+						map.put("Webos", webo);
+					}
 				} else {
 					map.put("errors", "账户或者密码错误！");
 				}
@@ -110,6 +135,12 @@ public class BasicController {
 		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
 			map.put("userID", session.getAttribute("userID"));
 			map.put("username", session.getAttribute("username"));
+			
+			Followuser myFollow = followuserDAO.findMyFollowCount(session.getAttribute("userID").toString());
+			Followuser followMe = followuserDAO.findFollowMeCount(session.getAttribute("userID").toString());
+
+			map.put("myFollow", myFollow);
+			map.put("followMe", followMe);
 		}else {
 			return new ModelAndView("redirect:/");
 		}
@@ -122,6 +153,11 @@ public class BasicController {
 		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
 			map.put("userID", session.getAttribute("userID"));
 			map.put("username", session.getAttribute("username"));
+			Followuser myFollow = followuserDAO.findMyFollowCount(session.getAttribute("userID").toString());
+			Followuser followMe = followuserDAO.findFollowMeCount(session.getAttribute("userID").toString());
+
+			map.put("myFollow", myFollow);
+			map.put("followMe", followMe);
 		}else {
 			return new ModelAndView("redirect:/");
 		}
@@ -163,6 +199,11 @@ public class BasicController {
 			map.put("username", session.getAttribute("username"));
 			
 			List<Webo> webo = weboDAO.findByUserID(session.getAttribute("userID").toString());
+			Followuser myFollow = followuserDAO.findMyFollowCount(session.getAttribute("userID").toString());
+			Followuser followMe = followuserDAO.findFollowMeCount(session.getAttribute("userID").toString());
+
+			map.put("myFollow", myFollow);
+			map.put("followMe", followMe);
 			if(webo != null) {
 //				return webo;
 				map.put("myWebos", webo);
@@ -188,6 +229,11 @@ public class BasicController {
 			map.put("username", session.getAttribute("username"));
 			
 			List<Webo> webo = weboDAO.find();
+			Followuser myFollow = followuserDAO.findMyFollowCount(session.getAttribute("userID").toString());
+			Followuser followMe = followuserDAO.findFollowMeCount(session.getAttribute("userID").toString());
+
+			map.put("myFollow", myFollow);
+			map.put("followMe", followMe);
 			
 			if(webo != null) {
 //				return webo;
@@ -204,6 +250,11 @@ public class BasicController {
 		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
 			map.put("userID", session.getAttribute("userID"));
 			map.put("username", session.getAttribute("username"));
+			Followuser myFollow = followuserDAO.findMyFollowCount(session.getAttribute("userID").toString());
+			Followuser followMe = followuserDAO.findFollowMeCount(session.getAttribute("userID").toString());
+
+			map.put("myFollow", myFollow);
+			map.put("followMe", followMe);
 			if(weboID > 0) {
 				Webo webo = weboDAO.findByID(weboID);
 				List<Comment> comment = commentDAO.viewByID(weboID);
@@ -213,6 +264,7 @@ public class BasicController {
 				}else {
 					map.put("follow", 0);
 				}
+//				return follow;
 	
 //				return comment;
 				map.put("comments", comment);
@@ -230,6 +282,11 @@ public class BasicController {
 		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
 			map.put("userID", session.getAttribute("userID"));
 			map.put("username", session.getAttribute("username"));
+			Followuser myFollow = followuserDAO.findMyFollowCount(session.getAttribute("userID").toString());
+			Followuser followMe = followuserDAO.findFollowMeCount(session.getAttribute("userID").toString());
+
+			map.put("myFollow", myFollow);
+			map.put("followMe", followMe);
 			if(StringUtils.isEmpty(comment)) {
 				map.put("commentErrors", "评论不能为空！");
 			}else {	
@@ -269,5 +326,70 @@ public class BasicController {
 			return new ModelAndView("redirect:/");
 		}
 		return new ModelAndView("redirect:/viewWebo?weboID="+weboID);
+	}
+	
+	@GetMapping(value = "friendWebo")
+	public Object friendWebo(Map<String, Object> map, HttpSession session) {
+		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
+			map.put("userID", session.getAttribute("userID"));
+			map.put("username", session.getAttribute("username"));
+			Followuser myFollow = followuserDAO.findMyFollowCount(session.getAttribute("userID").toString());
+			Followuser followMe = followuserDAO.findFollowMeCount(session.getAttribute("userID").toString());
+
+			map.put("myFollow", myFollow);
+			map.put("followMe", followMe);
+			List<Webo> friendWebo = weboDAO.findFriendWebo(session.getAttribute("userID").toString());
+			map.put("friendWebos", friendWebo);
+		}else{
+			return new ModelAndView("redirect:/");
+		}
+		return new ModelAndView("pages/friendWebo");
+	}
+	
+	@GetMapping(value = "friendList")
+	public Object friendList(Map<String, Object> map, HttpSession session) {
+		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
+			map.put("userID", session.getAttribute("userID"));
+			map.put("username", session.getAttribute("username"));
+			
+			List<User> myFollowInfo = userDAO.findMyFollow(session.getAttribute("userID").toString());
+				
+			Followuser myFollow = followuserDAO.findMyFollowCount(session.getAttribute("userID").toString());
+			Followuser followMe = followuserDAO.findFollowMeCount(session.getAttribute("userID").toString());
+
+			map.put("myFollow", myFollow);
+			map.put("followMe", followMe);
+			
+			if(myFollowInfo != null) {
+//				return webo;
+				map.put("myFollowInfo", myFollowInfo);
+			}
+		}else {
+			return new ModelAndView("redirect:/");
+		}
+		return new ModelAndView("pages/friendList");
+	}
+	
+	@GetMapping(value = "viewFriendWebo")
+	public Object viewFriendWebo(Integer friendID, Map<String, Object> map, HttpSession session) {
+		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
+			map.put("userID", session.getAttribute("userID"));
+			map.put("username", session.getAttribute("username"));
+			
+			List<Webo> friendWebo = weboDAO.findByUserID(friendID.toString());
+//			return friendWebo;
+			Followuser myFollow = followuserDAO.findMyFollowCount(session.getAttribute("userID").toString());
+			Followuser followMe = followuserDAO.findFollowMeCount(session.getAttribute("userID").toString());
+
+			map.put("myFollow", myFollow);
+			map.put("followMe", followMe);
+			if(friendWebo != null) {
+//				return webo;
+				map.put("friendWebos", friendWebo);
+			}
+		}else {
+			return new ModelAndView("redirect:/");
+		}
+		return new ModelAndView("pages/viewFriendWebo");
 	}
 }
