@@ -13,6 +13,7 @@ CREATE TABLE `user` (
   `agent` smallint(2) NULL,
   `phone` varchar(255) NULL,
   `address` varchar(255) NULL,
+  `permission` int(2) DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		

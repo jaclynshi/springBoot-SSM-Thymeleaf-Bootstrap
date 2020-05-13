@@ -1,0 +1,226 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <title>Demo</title>
+
+    <!-- Bootstrap core CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	<link rel="stylesheet" href="../css/all.min.css">
+	<meta name="msapplication-config" content="/docs/4.4/assets/img/favicons/browserconfig.xml">
+	<meta name="theme-color" content="#563d7c">
+	
+	<style>
+		header{
+		    border-bottom: 1px solid lightgray;
+		}
+		header a.text-muted.active{
+			color: #007bff!important;
+		}
+		.myWeboList li{
+			list-style:none;
+			box-shadow: 2px 2px 5px #ddd;
+    		padding: 15px;
+		}
+		.myWeboList .username{
+			height: 36px;
+		    display: inline-block;
+		    padding: 5px 10px;
+		    background: aliceblue;
+		    border-radius: 5px;
+		    color: blue;
+		}
+		.myWeboList img{
+			max-width: 300px;
+			width: 100%;
+		}
+		.myWeboList a.remove,
+		.myWeboList span.commentCount{
+			float: right;
+		}
+		
+		.admin-userManager .btn{
+			color:#fff;
+		}
+	</style>
+</head>
+  <body>
+  <div class="container">
+  <header class="blog-header py-3">
+    <div class="row flex-nowrap justify-content-between align-items-center">
+      <div class="col-8 pt-1">
+        <i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted" href="/admin/userManager">微博好心情展示后台主页</a>
+        <span th:if="${userID!=null}">
+        	<i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted active" href="/admin/userManager">平台用户管理</a>
+	        <i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted" href="/admin/weboManager">平台心情管理</a>
+	        <!-- <i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted" href="/friendWebo">平台评论信息管理</a> -->
+        </span>
+      </div>
+      
+      <div class="col-4 d-flex justify-content-end align-items-center">
+        <!--<a class="text-muted" href="#" aria-label="Search">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="mx-3" role="img" viewBox="0 0 24 24" focusable="false"><title>Search</title><circle cx="10.5" cy="10.5" r="7.5"/><path d="M21 21l-5.2-5.2"/></svg>
+        </a>-->
+        <div th:if="${userID==null}">
+            <button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#login">登录</button>
+            <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#signup">注册</button> -->
+        </div>
+        
+		<div class="dropdown" th:if="${userID!=null}">
+		  <button th:text="${username}" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+		  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+		    <a class="dropdown-item" href="logout">退出</a>
+		  </div>
+		</div>
+
+      </div>
+    </div>
+  </header>
+  
+  
+  <div class="container admin-userManager">
+  	<div class="row">
+  		<div class="col mt-3">
+  			<form method="post">
+  				<input type="text" name="keyword" class="form-control searchInput" style="max-width:300px;float:right" placeholder="输入用户账号或名称搜索">
+  				<input class="btn btn-primary searchBtn" type="submit" style="display:none">
+  			</form>
+  		</div>
+  	</div>
+  	<div class="row">
+  		<div class="col mt-3">
+		  	<table class="table">
+			  <thead class="thead-dark">
+			    <tr>
+			      <th scope="col">用户账号</th>
+			      <th scope="col">用户密码</th>
+			      <th scope="col">用户名称</th>
+			      <th scope="col">性别</th>
+			      <th scope="col">用户手机</th>
+			      <th scope="col">用户地址</th>
+			      <th scope="col">操作</th>
+			    </tr>
+			  </thead>
+			  <form method="post">
+				  <tbody>
+				    <tr th:each="item,stat:${allUser}" >
+				      	<th th:text="${item.account}"></th>
+				      	<th th:text="${item.password}"  th:id="'password_'+${item.id}"></th>
+				      	<th th:id="'passwordInput_'+${item.id}"  style="display:none">
+				      		<input type="password" name="password" class="form-control">
+				      		<input type="text" name="userID" class="form-control" th:value="${item.id}" style="display:none">
+				      	</th>
+				      	<th th:text="${item.name}"></th>
+				      	<th th:text="${item.agent}"></th>
+				      	<th th:text="${item.phone}"></th>
+				      	<th th:text="${item.address}"></th>
+				      	<th>
+				      		<a class="btn btn-primary editPassoword" th:id="'editPassword_'+${item.id}" th:onclick="'editPassword('+${item.id}+')'">编辑</a>
+				      		<input class="btn btn-primary savePassword" th:id="'savePassword_'+${item.id}" type="submit" value="保存" style="display:none">
+				      		<a class="btn btn-danger" th:href="@{'removeUser?userID=' + ${item.id}}">删除</a>
+				      	</th>
+				    </tr>
+				  </tbody>
+				</form>
+			</table>
+		</div>
+	</div>
+  </div>
+  
+  <!-- Modal -->
+	<div class="modal fade" id="login" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalLabel">登录</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	      	<form method="post">
+	      		<p class="error_msg text-danger" th:text="${errors}"></p>
+		      	<div class="input-group mb-3">
+		        	<input type="text" name="account" class="form-control" placeholder="请输入您的账号">
+		        </div>
+		        <div class="input-group mb-3">
+		        	<input type="password" name="password" class="form-control" placeholder="请输入您的密码">
+		        </div>
+		        <input type="text" name="action" class="form-control" hidden value="login">
+		        <input class="btn btn-primary" type="submit" value="登录">
+		    </form>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+  </div>
+  
+  <div class="modal fade" id="signup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalLabel">注册</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	      	<form method="post">
+	      		<p class="success_msg text-success" th:text="${success}"></p>
+	      		<p class="error_msg text-danger" th:text="${errors}"></p>
+		      	<div class="input-group mb-3">
+		        	<input type="text" name="account" class="form-control" placeholder="请输入账号">
+		        </div>
+		        <div class="input-group mb-3">
+		        	<input type="text" name="name" class="form-control" placeholder="请输入昵称">
+		        </div>
+		        <div class="input-group mb-3">
+		        	<input type="password" name="password" class="form-control" placeholder="请输入密码">
+		        </div>
+		        <div class="input-group mb-3">
+		        	<input type="text" name="phone" class="form-control" placeholder="请输入手机号">
+		        </div>
+		        <div class="input-group mb-3">
+		        	<input type="text" name="address" class="form-control" placeholder="请输入地址">
+		        </div>
+		        <div class="input-group mb-3">
+					<div class="btn-group" data-toggle="buttons">
+						<label class="btn btn-info">
+							<input type="radio"  name="agent" value="0">男
+						</label>
+						<label class="btn btn-info">
+							<input type="radio" name="agent" value="1">女
+						</label>
+					</div>
+				</div>
+		        <input type="text" name="action" class="form-control" hidden value="signup">
+		        <input class="btn btn-primary" type="submit" value="注册">
+		    </form>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+  </div>
+	
+  	<script src="../script/jquery-3.5.1.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+	<script type="text/javascript">
+		function editPassword(id){
+			$('#editPassword_'+id).css('display','none');
+			$('#savePassword_'+id).css('display','block');
+			$('#password_'+id).css('display','none');
+			$('#passwordInput_'+id).css('display','block');
+		}
+  		
+  		$('input.searchInpurt').keyup(function(event){
+  			 if(event.keyCode ==13){
+  			  $("input.searchBtn").trigger("click");
+  			 }
+  			});
+  	</script>
+</body>
+</html>

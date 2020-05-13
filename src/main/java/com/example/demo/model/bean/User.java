@@ -13,6 +13,7 @@ public class User implements Serializable {
 	private String image;
 	private String phone;
 	private String address;
+	private Integer permission;
 	private Followuser followuser;
 
     // 省略get和set方法，大家自己设置即可
@@ -69,5 +70,11 @@ public class User implements Serializable {
 	}
 	public void setAddress(String address) {
 		this.address = address;
+	}
+	public Integer getPermission() {
+		return permission;
+	}
+	public void setPermission(Integer permission) {
+		this.permission = permission;
 	}
 }

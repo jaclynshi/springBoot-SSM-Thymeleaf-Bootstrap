@@ -25,5 +25,6 @@ public interface WeboDAO {
 	
 	public List<Webo> findFriendWebo(@Param("userID")String userID);
 
+	public List<Webo> findSearch(@Param("keyword")String keyword);
 	// 注： CRTL+Shift+O，快捷导入所有import
 }

@@ -14,11 +14,15 @@
   </select>
   
   <select id="find" resultMap="userWeboMap">
-    SELECT w.id, w.userID, w.content, w.image, w.publishTime, w.commentCount, u.name from webo w left join user u on w.userID = u.id order by w.publishTime desc
+    SELECT w.id, w.userID, w.content, w.image, w.publishTime, w.commentCount, u.name, u.account from webo w left join user u on w.userID = u.id order by w.publishTime desc
   </select>
   
   <select id="findFriendWebo" resultMap="weboFollowMap">
     select w.*, u.name from webo w left join user u on u.id = w.userID where userID in (select followTo from followuser where followFrom = #{userID}) order by w.publishTime desc
+  </select>
+  
+  <select id="findSearch" resultMap="userWeboMap">
+    SELECT w.id, w.userID, w.content, w.image, w.publishTime, w.commentCount, u.name, u.account from webo w left join user u on w.userID = u.id where u.account like '%${keyword}%' or u.name like '%${keyword}%' order by w.publishTime desc 
   </select>
   
   <resultMap id="userWeboMap" type="com.example.demo.model.bean.Webo">
