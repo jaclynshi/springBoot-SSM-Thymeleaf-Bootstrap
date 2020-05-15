@@ -162,6 +162,8 @@ public class BasicController {
 			return new ModelAndView("redirect:/");
 		}
 		
+		String fileName = "";
+		
 		if(StringUtils.isEmpty(weboContent)) {
 			map.put("uploadErrors", "心情内容不能为空！");
 		}else if(!StringUtils.isEmpty(weboImg.getOriginalFilename())) {
@@ -169,8 +171,22 @@ public class BasicController {
 	        String localPath = "E:\\demo\\src\\main\\resources\\static\\upload";
 	        // 上传成功或者失败的提示
 	        String msg = "";
+	        
+	        fileName = weboImg.getOriginalFilename();
+	        
+	        int unixSep = fileName.lastIndexOf('/');
+			// Check for Windows-style path
+			int winSep = fileName.lastIndexOf('\\');
+			// Cut off at latest possible point
+			int pos = (winSep > unixSep ? winSep : unixSep);
+			if (pos != -1)  {
+				// Any sort of path separator found...
+				fileName = fileName.substring(pos + 1);
+			}
+			
+//			return fileName;
 
-	        if (FileUtils.upload(weboImg, localPath, weboImg.getOriginalFilename())){
+	        if (FileUtils.upload(weboImg, localPath, fileName)){
 	            // 上传成功，给出页面提示
 	            msg = "上传成功！";
 	        }else {
@@ -179,14 +195,14 @@ public class BasicController {
 			
 	        // 显示图片
 	        map.put("msg", msg);
-	        map.put("fileName", weboImg.getOriginalFilename());
+	        map.put("fileName", fileName);
 		}
 		
 		Date d = new Date();
 	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss ");
 	    sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
 	    
-		weboDAO.create(session.getAttribute("userID").toString(), weboContent, weboImg.getOriginalFilename(), sdf.format(d));
+		weboDAO.create(session.getAttribute("userID").toString(), weboContent, fileName, sdf.format(d));
         
         return new ModelAndView("redirect:/myWebo");
 	}
