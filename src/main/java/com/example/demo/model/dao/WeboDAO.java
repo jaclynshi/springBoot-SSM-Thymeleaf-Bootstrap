@@ -15,11 +15,15 @@ public interface WeboDAO {
 	
 	public Webo findByID(@Param("weboID")Integer weboID);
 	
+	public List<Webo> searchWeboByDate(@Param("date")String date);
+	
 	public List<Webo> find();
 
 	public Integer create(@Param("userID")String userID, @Param("content")String content, @Param("image")String image, @Param("publishTime")String publishTime);
 	
 	public Integer deleteByID(@Param("myWeboID")Integer myWeboID);
+	
+	public Integer deleteByUserID(@Param("userID")String userID);
 	
 	public Integer updateCommentCount(@Param("weboID")Integer weboID);
 	

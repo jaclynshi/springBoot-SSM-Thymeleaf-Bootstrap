@@ -14,16 +14,20 @@
 	<meta name="theme-color" content="#563d7c">
 	
 	<style>
+		body{
+			
+		}
 		header{
 		    border-bottom: 1px solid lightgray;
-		}
-		header a.text-muted.active{
-			color: #007bff!important;
 		}
 		.myWeboList li{
 			list-style:none;
 			box-shadow: 2px 2px 5px #ddd;
     		padding: 15px;
+    		max-width: 32%;
+		    margin-left: 0.65%;
+		    margin-right: 0.65%;
+		    background: floralwhite;
 		}
 		.myWeboList .username{
 			height: 36px;
@@ -41,14 +45,52 @@
 		.myWeboList span.commentCount{
 			float: right;
 		}
+		.container{
+			max-width: 100%;
+		}
+		header .text-muted{
+			color: #fff!important;
+			text-decoration: none;
+		}
+		header .text-muted:hover,
+		header .text-muted.active{
+			color: hsla(0,0%,100%,.7)!important;
+		}
+		header button.login,
+		header button.signup{
+		    background: cadetblue;
+    		border: none;
+		}
+		.indexInfo{
+		    padding: 20px 0 30px;
+    		background: burlywood;
+		}
+		.profile_box{
+			text-align: center;
+		}
+		.profile_box ul{
+		    max-width: 240px;
+		    text-align: left;
+		    margin: 0 auto;
+		    list-style: none;
+		}
+		.pbTime{
+		    float: right;
+    		line-height: 36px;
+		}
+		.commentCount{
+			position: absolute;
+		    bottom: 10px;
+		    right: 15px;
+		}
 	</style>
 </head>
   <body>
-  <div class="container">
-  <header class="blog-header py-3">
+  <div class="container pl-0 pr-0">
+  <header class="blog-header py-3  navbar-dark bg-dark">
     <div class="row flex-nowrap justify-content-between align-items-center">
       <div class="col-8 pt-1">
-        <i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted" href="/">主页</a>
+        <i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted " href="/">主页</a>
         <span th:if="${userID!=null}">
         	<i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted active" href="/weboCenter">微博心情大厅</a>
 	        <i class="fal fa-home-lg-alt mr-3"></i><a class="text-muted" href="/myWebo">我的心情微博</a>
@@ -62,12 +104,12 @@
         <!--<a class="text-muted" href="#" aria-label="Search">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="mx-3" role="img" viewBox="0 0 24 24" focusable="false"><title>Search</title><circle cx="10.5" cy="10.5" r="7.5"/><path d="M21 21l-5.2-5.2"/></svg>
         </a>-->
-        <div th:if="${userID==null}">
+        <div th:if="${userID==null}" class="mr-3">
             <button type="button" class="btn btn-primary"  data-toggle="modal" data-target="#login">登录</button>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#signup">注册</button>
         </div>
         
-		<div class="dropdown" th:if="${userID!=null}">
+		<div class="dropdown mr-3" th:if="${userID!=null}">
 		  <button th:text="${username}" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
 		  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 		    <a class="dropdown-item" href="logout">退出</a>
@@ -81,25 +123,9 @@
   
   <div class="container">
   	<div class="row">
-	  	<div class="col-md-8">
-		  <ul class="myWeboList pl-0">
-		  	<p class="mt-3" th:if="${#lists.isEmpty(Webos)}">还没有何微博哦！</p>
-		  	<li th:each="item,stat:${Webos}" class="mb-3 mt-3">
-		  		<a th:href="@{'viewWebo?weboID=' + ${item.id}}" style="text-decoration: none;color: #000;">
-		          	<p>
-		          		<span class="username mr-3" th:text="${item.user.name}"></span><span class="content" th:text="${item.content}"></span>
-		          		<!-- <a th:href="@{'removeMyWebo?myWeboID=' + ${item.id}}" class="remove">删除</a> -->
-		          	
-		          	</p>
-		          	<img th:src="${item.image != ''}?'upload/' + ${item.image}:''" th:style="${item.image == ''}?'display:none':''"/>
-		          	<p class="publishTime mb-0 mt-2"><span th:text="${item.publishTime}"></span><span class="commentCount" th:text="'评论：' + ${item.commentCount} + '条'"></span></p>
-		          </a>
-	      	</li>
-		  </ul>
-		 </div>
-		 <div class="col-md-4">
+  		<div class="col-md-12 indexInfo pt-2 pb-4">
 		 	<div class="right_box mt-3">
-		 		<div class="profile_box">
+		 		<div class="profile_box" th:if="${userID!=null}">
 		 			<p th:text="${username} + '的主页'"></p>
 		 			<p>
 		 				<a style="text-decoration: none;color: #000;" href="/friendList"><span class="mr-3" th:text="'我的关注' + ${myFollow.myFollowCount}"></span></a>
@@ -113,11 +139,32 @@
 		 				<li>1.本系统作为毕业设计使用</li>
 		 				<li>2.如有问题请联系我</li>
 		 				<li>3.联系方式:xxx</li>
-		 				<li>4.QQ:1640864316@qq.com</li>
+		 				<li>4.QQ:xxx</li>
 		 			</ul>
 		 		</div>
 		 	</div>
 		 </div>
+	  	<div class="col-md-12">
+		  <ul class="myWeboList pl-0">
+		  	<div class="row">
+		  	<div class="mt-3" th:if="${#lists.isEmpty(Webos)}" style="margin: 0 auto">
+		  		<img src="image/blank_page.png">
+		  	</div>
+		  	<li th:each="item,stat:${Webos}" class="mb-3 mt-3 col-md-4">
+		  		<a th:href="@{'viewWebo?weboID=' + ${item.id}}" style="text-decoration: none;color: #000;">
+		          	<p>
+		          		<span class="username mr-3" th:text="${item.user.name}"></span><span class="content" th:text="${item.content}"></span><span th:text="${item.publishTime}" class="pbTime"></span>
+		          		<!-- <a th:href="@{'removeMyWebo?myWeboID=' + ${item.id}}" class="remove">删除</a> -->
+		          	
+		          	</p>
+		          	<img th:src="${item.image != ''}?'upload/' + ${item.image}:''" th:style="${item.image == ''}?'display:none':''"/>
+		          	<p class="publishTime mb-0 mt-2"><span class="commentCount" th:text="'评论：' + ${item.commentCount} + '条'"></span></p>
+		          </a>
+	      	</li>
+	      	</div>
+		  </ul>
+		 </div>
+		 
 	</div>
   </div>
   
@@ -190,6 +237,7 @@
 		        <input type="text" name="action" class="form-control" hidden value="signup">
 		        <input class="btn btn-primary" type="submit" value="注册">
 		    </form>
+	
 	      </div>
 	    </div>
 	  </div>

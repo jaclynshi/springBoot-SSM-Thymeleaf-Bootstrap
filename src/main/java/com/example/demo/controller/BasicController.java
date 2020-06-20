@@ -49,7 +49,7 @@ public class BasicController {
 	
 	@GetMapping(value = "")
 	public Object index(Map<String, Object> map, HttpSession session) {
-		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
+		if(!StringUtils.isEmpty(session.getAttribute("userID"))) {
 			map.put("userID", session.getAttribute("userID"));
 			map.put("username", session.getAttribute("username"));
 			
@@ -72,7 +72,7 @@ public class BasicController {
 	public Object login(Map<String, Object> map,@RequestParam(value = "account", required = false) String account,
 			@RequestParam(value = "password", required = false) String password, @RequestParam(value = "action", required = false) String action
 			, @RequestParam(value = "name", required = false) String name, @RequestParam(value = "agent", required = false) Integer agent
-			, @RequestParam(value = "phone", required = false) String phone, @RequestParam(value = "address", required = false) String address, HttpSession session) {
+			, @RequestParam(value = "phone", required = false) String phone, @RequestParam(value = "address", required = false) String address, @RequestParam(value = "image", required = false) MultipartFile image, @RequestParam(value = "date", required = false) String date, HttpSession session) {
 		
 		if(action.equals("login")) {
 			if(StringUtils.isEmpty(account)) {
@@ -85,8 +85,10 @@ public class BasicController {
 				if (user != null) {
 					session.setAttribute("userID", user.getId());
 					session.setAttribute("username", user.getName());
+					session.setAttribute("image", user.getImage());
 					map.put("username", session.getAttribute("username"));
 					map.put("userID", session.getAttribute("userID"));
+					map.put("image", session.getAttribute("image"));
 					List<Webo> webo = weboDAO.find();
 					
 					Followuser myFollow = followuserDAO.findMyFollowCount(session.getAttribute("userID").toString());
@@ -109,13 +111,44 @@ public class BasicController {
 			}else if(StringUtils.isEmpty(password)){
 				map.put("errors", "密码不能为空!");
 			}else {
+				String fileName = "";
 				User user = userDAO.findByAccount(account);
 				if(user != null) {
 					map.put("errors", "该用户已存在！");
 				}else {
-					userDAO.create(account, password, name, agent, phone, address);
+//					return image.getOriginalFilename();
+					if(!StringUtils.isEmpty(image.getOriginalFilename())) {
+				        String localPath = "E:\\demo\\src\\main\\resources\\static\\upload";				    
+				        String msg = "";				        
+				        fileName = image.getOriginalFilename();				        
+				        int unixSep = fileName.lastIndexOf('/');						
+						int winSep = fileName.lastIndexOf('\\');						
+						int pos = (winSep > unixSep ? winSep : unixSep);
+						if (pos != -1)  {
+							fileName = fileName.substring(pos + 1);
+						}
+						
+				        if (FileUtils.upload(image, localPath, fileName)){
+				            // 上传成功，给出页面提示
+				            msg = "上传成功！";
+				        }else {
+				            msg = "上传失败！";
+				        }
+					}
+					
+					userDAO.create(account, password, name, agent, phone, address, fileName);
 					map.put("success", "注册成功，您可以进行登录！");
 				}
+			}
+		}else if(action.equals("searchWebo")) {
+			if(!StringUtils.isEmpty(session.getAttribute("userID"))) {
+//				map.put("userID", session.getAttribute("userID"));
+				map.put("username", session.getAttribute("username"));
+			}
+			List<Webo> webo = weboDAO.searchWeboByDate(date);
+			if(webo != null) {
+//				return webo;
+				map.put("Webos", webo);
 			}
 		}
 				
@@ -132,7 +165,7 @@ public class BasicController {
 	
 	@GetMapping(value = "publishWebo")
 	public Object publishWebo(Map<String, Object> map, HttpSession session) {
-		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
+		if(!StringUtils.isEmpty(session.getAttribute("userID"))) {
 			map.put("userID", session.getAttribute("userID"));
 			map.put("username", session.getAttribute("username"));
 			
@@ -150,7 +183,7 @@ public class BasicController {
 	@RequestMapping(value = "publishWebo", method = RequestMethod.POST)
 	public Object publish(Map<String, Object> map,@RequestParam(value = "weboContent", required = false) String weboContent,
 			@RequestParam("weboImg") MultipartFile weboImg, HttpSession session) {
-		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
+		if(!StringUtils.isEmpty(session.getAttribute("userID"))) {
 			map.put("userID", session.getAttribute("userID"));
 			map.put("username", session.getAttribute("username"));
 			Followuser myFollow = followuserDAO.findMyFollowCount(session.getAttribute("userID").toString());
@@ -162,6 +195,8 @@ public class BasicController {
 			return new ModelAndView("redirect:/");
 		}
 		
+		String fileName = "";
+		
 		if(StringUtils.isEmpty(weboContent)) {
 			map.put("uploadErrors", "心情内容不能为空！");
 		}else if(!StringUtils.isEmpty(weboImg.getOriginalFilename())) {
@@ -169,8 +204,22 @@ public class BasicController {
 	        String localPath = "E:\\demo\\src\\main\\resources\\static\\upload";
 	        // 上传成功或者失败的提示
 	        String msg = "";
+	        
+	        fileName = weboImg.getOriginalFilename();
+	        
+	        int unixSep = fileName.lastIndexOf('/');
+			// Check for Windows-style path
+			int winSep = fileName.lastIndexOf('\\');
+			// Cut off at latest possible point
+			int pos = (winSep > unixSep ? winSep : unixSep);
+			if (pos != -1)  {
+				// Any sort of path separator found...
+				fileName = fileName.substring(pos + 1);
+			}
+			
+//			return fileName;
 
-	        if (FileUtils.upload(weboImg, localPath, weboImg.getOriginalFilename())){
+	        if (FileUtils.upload(weboImg, localPath, fileName)){
 	            // 上传成功，给出页面提示
 	            msg = "上传成功！";
 	        }else {
@@ -179,14 +228,14 @@ public class BasicController {
 			
 	        // 显示图片
 	        map.put("msg", msg);
-	        map.put("fileName", weboImg.getOriginalFilename());
+	        map.put("fileName", fileName);
 		}
 		
 		Date d = new Date();
 	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss ");
 	    sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
 	    
-		weboDAO.create(session.getAttribute("userID").toString(), weboContent, weboImg.getOriginalFilename(), sdf.format(d));
+		weboDAO.create(session.getAttribute("userID").toString(), weboContent, fileName, sdf.format(d));
         
         return new ModelAndView("redirect:/myWebo");
 	}
@@ -194,7 +243,7 @@ public class BasicController {
 	
 	@GetMapping(value = "myWebo")
 	public Object myWebo(Map<String, Object> map, HttpSession session) {
-		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
+		if(!StringUtils.isEmpty(session.getAttribute("userID"))) {
 			map.put("userID", session.getAttribute("userID"));
 			map.put("username", session.getAttribute("username"));
 			
@@ -224,7 +273,7 @@ public class BasicController {
 	
 	@GetMapping(value = "weboCenter")
 	public Object weboCenter(Map<String, Object> map, HttpSession session) {
-		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
+		if(!StringUtils.isEmpty(session.getAttribute("userID"))) {
 			map.put("userID", session.getAttribute("userID"));
 			map.put("username", session.getAttribute("username"));
 			
@@ -247,7 +296,7 @@ public class BasicController {
 	
 	@GetMapping(value = "viewWebo")
 	public Object viewWebo(Integer weboID, Map<String, Object> map, HttpSession session) {
-		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
+		if(!StringUtils.isEmpty(session.getAttribute("userID"))) {
 			map.put("userID", session.getAttribute("userID"));
 			map.put("username", session.getAttribute("username"));
 			Followuser myFollow = followuserDAO.findMyFollowCount(session.getAttribute("userID").toString());
@@ -279,7 +328,7 @@ public class BasicController {
 	
 	@RequestMapping(value = "viewWebo", method = RequestMethod.POST)
 	public Object sendComment(Integer weboID, Map<String, Object> map,@RequestParam(value = "comment", required = false) String comment, HttpSession session) {	
-		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
+		if(!StringUtils.isEmpty(session.getAttribute("userID"))) {
 			map.put("userID", session.getAttribute("userID"));
 			map.put("username", session.getAttribute("username"));
 			Followuser myFollow = followuserDAO.findMyFollowCount(session.getAttribute("userID").toString());
@@ -306,7 +355,7 @@ public class BasicController {
 	
 	@GetMapping(value = "followuser")
 	public Object followuser(String followFrom, String followTo,String weboID, Map<String, Object> map, HttpSession session) {
-		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
+		if(!StringUtils.isEmpty(session.getAttribute("userID"))) {
 			map.put("userID", session.getAttribute("userID"));
 			map.put("username", session.getAttribute("username"));
 			followuserDAO.create(followFrom, followTo);
@@ -318,7 +367,7 @@ public class BasicController {
 	
 	@GetMapping(value = "unfollowuser")
 	public Object unfollowuser(String followFrom, String followTo,String weboID, Map<String, Object> map, HttpSession session) {
-		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
+		if(!StringUtils.isEmpty(session.getAttribute("userID"))) {
 			map.put("userID", session.getAttribute("userID"));
 			map.put("username", session.getAttribute("username"));
 			followuserDAO.delete(followFrom, followTo);
@@ -330,7 +379,7 @@ public class BasicController {
 	
 	@GetMapping(value = "friendWebo")
 	public Object friendWebo(Map<String, Object> map, HttpSession session) {
-		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
+		if(!StringUtils.isEmpty(session.getAttribute("userID"))) {
 			map.put("userID", session.getAttribute("userID"));
 			map.put("username", session.getAttribute("username"));
 			Followuser myFollow = followuserDAO.findMyFollowCount(session.getAttribute("userID").toString());
@@ -348,7 +397,7 @@ public class BasicController {
 	
 	@GetMapping(value = "friendList")
 	public Object friendList(Map<String, Object> map, HttpSession session) {
-		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
+		if(!StringUtils.isEmpty(session.getAttribute("userID"))) {
 			map.put("userID", session.getAttribute("userID"));
 			map.put("username", session.getAttribute("username"));
 			
@@ -372,7 +421,7 @@ public class BasicController {
 	
 	@GetMapping(value = "viewFriendWebo")
 	public Object viewFriendWebo(Integer friendID, Map<String, Object> map, HttpSession session) {
-		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
+		if(!StringUtils.isEmpty(session.getAttribute("userID"))) {
 			map.put("userID", session.getAttribute("userID"));
 			map.put("username", session.getAttribute("username"));
 			

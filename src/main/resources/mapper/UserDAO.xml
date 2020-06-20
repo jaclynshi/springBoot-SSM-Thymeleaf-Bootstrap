@@ -13,6 +13,10 @@
     SELECT id, account, name, password, address, image, phone, agent, permission from user where account = #{account}
   </select>
   
+  <select id="findByID" resultType="com.example.demo.model.bean.User">
+    SELECT id, account, name, password, address, image, phone, agent, permission from user where id = #{userID}
+  </select>
+  
   <select id="findMyFollow" resultMap="userFollowMap">
     SELECT u.name, u.id from user u left join followuser fu on u.id = fu.followTo where fu.followFrom = #{userID}
   </select>
@@ -38,7 +42,7 @@
 	</resultMap>
   
   <insert id="create" parameterType="com.example.demo.model.bean.User">
-    INSERT into user(account, password, name, agent, phone, address) VALUES(#{account}, #{password}, #{name}, #{agent}, #{phone}, #{address})
+    INSERT into user(account, password, name, agent, phone, address, image) VALUES(#{account}, #{password}, #{name}, #{agent}, #{phone}, #{address}, #{image})
   </insert>
   
   <delete id="remove" parameterType="com.example.demo.model.bean.User">

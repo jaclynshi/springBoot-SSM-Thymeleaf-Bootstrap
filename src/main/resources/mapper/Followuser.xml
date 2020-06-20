@@ -17,7 +17,11 @@
     INSERT into followuser(followFrom, followTo) VALUES(#{followFrom}, #{followTo})
   </insert>
   
-  <insert id="delete" parameterType="com.example.demo.model.bean.Followuser">
+  <delete id="delete" parameterType="com.example.demo.model.bean.Followuser">
     DELETE FROM followuser where followFrom = #{followFrom} and followTo = #{followTo}
-  </insert>
+  </delete>
+  
+  <delete id="deleteByUserID" parameterType="com.example.demo.model.bean.Followuser">
+    DELETE FROM followuser where followFrom = #{userID} or followTo = #{userID}
+  </delete>
 </mapper>

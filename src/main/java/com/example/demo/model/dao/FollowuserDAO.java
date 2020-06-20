@@ -20,6 +20,8 @@ public interface FollowuserDAO {
 	public Followuser findMyFollowCount(@Param("userID")String userID);
 	
 	public Followuser findFollowMeCount(@Param("userID")String userID);
+	
+	public Integer deleteByUserID(@Param("userID")Integer userID);
 
 	// 注： CRTL+Shift+O，快捷导入所有import
 }

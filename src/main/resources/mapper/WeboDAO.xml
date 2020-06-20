@@ -8,6 +8,10 @@
   <select id="findByID" resultMap="userWeboMap">
     SELECT w.id, w.userID, w.content, w.image, w.publishTime, w.commentCount, u.name, u.id as userID from webo w left join user u on w.userID = u.id where w.id = #{weboID}
   </select>
+  
+  <select id="searchWeboByDate" resultMap="userWeboMap">
+    SELECT w.id, w.userID, w.content, w.image, w.publishTime, w.commentCount, u.name, u.id as userID from webo w left join user u on w.userID = u.id where w.publishTime like '%${date}%'
+  </select>
 	
   <select id="findByUserID" resultMap="userWeboMap">
     SELECT w.id, w.userID, w.content, w.image, w.publishTime, w.commentCount, u.name from webo w left join user u on w.userID = u.id where w.userID = #{userID} order by w.publishTime desc
@@ -74,6 +78,10 @@
   
   <delete id="deleteByID" parameterType="com.example.demo.model.bean.Webo">
     delete from webo where id = #{myWeboID}
+  </delete>
+  
+  <delete id="deleteByUserID" parameterType="com.example.demo.model.bean.Webo">
+    delete from webo where userID = #{userID}
   </delete>
   
   <update id="updateCommentCount" parameterType="com.example.demo.model.bean.Webo">

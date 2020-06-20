@@ -47,10 +47,40 @@ public class AdminController {
 	@Autowired
 	private FollowuserDAO followuserDAO;
 	
+	@RequestMapping(value = "admin/login")
+	public Object login(HttpSession session) {
+
+		return new ModelAndView("admin/login"); // 姝ゅ鎸囧悜鐣岄潰;
+	}
+	
+	@RequestMapping(value = "admin/login", method = RequestMethod.POST)
+	public Object login1(Map<String, Object> map,@RequestParam(value = "account", required = false) String account,
+			@RequestParam(value = "password", required = false) String password, HttpSession session) {
+		session.removeAttribute("userID");
+		session.removeAttribute("username");
+		if(StringUtils.isEmpty(account)) {
+			map.put("errors", "账号不能为空！");
+		}else if(StringUtils.isEmpty(password)){
+			map.put("errors", "密码不能为空!");
+		}else {
+			User user = userDAO.find(account, password);
+			System.out.println(user);
+			if (user != null && user.getPermission()==1) {
+				session.setAttribute("userID", user.getId());
+				session.setAttribute("username", user.getName());
+				return new ModelAndView("redirect:/admin/userManager");
+			} else {
+				map.put("errors", "账户或者密码错误！");
+			}
+		}
+			
+		return new ModelAndView("admin/login");
+	}
+	
 	@GetMapping(value = "admin/userManager")
 	public Object userManager(Map<String, Object> map, HttpSession session) {
-		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
-			User user = userDAO.findByAccount(session.getAttribute("username").toString());
+		if(!StringUtils.isEmpty(session.getAttribute("userID"))) {
+			User user = userDAO.findByID(session.getAttribute("userID").toString());
 //			return user.getPermission();
 			if(user.getPermission()==1) {
 				map.put("userID", session.getAttribute("userID"));
@@ -108,20 +138,24 @@ public class AdminController {
 	public Object logout(HttpSession session) {
 		session.removeAttribute("userID");
 		session.removeAttribute("username");
-		return new ModelAndView("redirect:/admin/userManager"); // 姝ゅ鎸囧悜鐣岄潰;
+		return new ModelAndView("redirect:/admin/login"); // 姝ゅ鎸囧悜鐣岄潰;
 	}
 	
 	@GetMapping(value = "admin/removeUser")
 	public Object removeUser(Integer userID, Map<String, Object> map, HttpSession session) {
 //		return userID;
 		userDAO.remove(userID);
+		weboDAO.deleteByUserID(userID.toString());
+		followuserDAO.deleteByUserID(userID);
+		commentDAO.deleteByUserID(userID.toString());
+		
 		return new ModelAndView("redirect:/admin/userManager");
 	}
 	
 	@RequestMapping(value = "admin/userManager", method = RequestMethod.POST)
 	public Object savePassword(Map<String, Object> map,@RequestParam(value = "password", required = false) String password,
 			@RequestParam(value = "userID", required = false) String userID, @RequestParam(value = "keyword", required = false) String keyword, HttpSession session) {
-		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
+		if(!StringUtils.isEmpty(session.getAttribute("userID"))) {
 			map.put("username", session.getAttribute("username"));
 			map.put("userID", session.getAttribute("userID"));
 		
@@ -152,8 +186,8 @@ public class AdminController {
 	
 	@GetMapping(value = "admin/weboManager")
 	public Object weboManager(Map<String, Object> map, HttpSession session) {
-		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
-			User user = userDAO.findByAccount(session.getAttribute("username").toString());
+		if(!StringUtils.isEmpty(session.getAttribute("userID"))) {
+			User user = userDAO.findByID(session.getAttribute("userID").toString());
 //			return user.getPermission();
 			if(user.getPermission()==1) {
 				map.put("userID", session.getAttribute("userID"));
@@ -176,7 +210,7 @@ public class AdminController {
 	
 	@RequestMapping(value = "admin/weboManager", method = RequestMethod.POST)
 	public Object weboSearch(Map<String, Object> map, @RequestParam(value = "keyword", required = false) String keyword, HttpSession session) {
-		if(!StringUtils.isEmpty(session.getAttribute("username"))) {
+		if(!StringUtils.isEmpty(session.getAttribute("userID"))) {
 			map.put("username", session.getAttribute("username"));
 			map.put("userID", session.getAttribute("userID"));
 			

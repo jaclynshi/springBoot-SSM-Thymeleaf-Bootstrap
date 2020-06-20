@@ -34,4 +34,8 @@
   <insert id="create" parameterType="com.example.demo.model.bean.Comment">
     INSERT into comment(weboID, commentFrom, content, commentTime) VALUES(#{weboID}, #{commentFrom}, #{content}, #{commentTime})
   </insert>
+  
+  <delete id="deleteByUserID" parameterType="com.example.demo.model.bean.Webo">
+    delete from comment where commentFrom = #{userID}
+  </delete>
 </mapper>

@@ -15,5 +15,6 @@ public interface CommentDAO {
 	
 	public Integer create(@Param("weboID")Integer weboID, @Param("commentFrom")String commentFrom, @Param("content")String content, @Param("commentTime")String commentTime);
 	
+	public Integer deleteByUserID(@Param("userID")String userID);
 	// 注： CRTL+Shift+O，快捷导入所有import
 }

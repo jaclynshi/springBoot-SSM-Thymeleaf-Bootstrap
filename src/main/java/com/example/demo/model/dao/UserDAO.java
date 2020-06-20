@@ -15,7 +15,9 @@ public interface UserDAO {
 	
 	public User findByAccount(@Param("account")String account);
 	
-	public Integer create(@Param("account")String account, @Param("password")String password, @Param("name")String name, @Param("agent")Integer agent, @Param("phone")String phone, @Param("address")String address);
+	public User findByID(@Param("userID")String userID);
+	
+	public Integer create(@Param("account")String account, @Param("password")String password, @Param("name")String name, @Param("agent")Integer agent, @Param("phone")String phone, @Param("address")String address, @Param("image")String image);
 
 	public List<User> findMyFollow(@Param("userID")String userID);
 	
